@@ -521,6 +521,30 @@ self["C3_Shaders"] = {};
 
 "use strict";C3.Plugins.Text.Exps={Text(){return this._text},PlainText(){return this._enableBBcode?C3.BBString.StripAnyTags(this._text):this._text},FaceName(){return this._faceName},FaceSize(){return this._ptSize},TextWidth(){return this._UpdateTextSize(),this._webglText.GetTextWidth()},TextHeight(){return this._UpdateTextSize(),this._webglText.GetTextHeight()},LineHeight(){return this._lineHeightOffset}};
 
+"use strict";{C3.Plugins.Button=class extends C3.SDKDOMPluginBase{constructor(a){super(a,"button"),this.AddElementMessageHandler("click",(a,b)=>a._OnClick(b))}Release(){super.Release()}}}
+
+"use strict";C3.Plugins.Button.Type=class extends C3.SDKTypeBase{constructor(a){super(a)}Release(){super.Release()}OnCreate(){}};
+
+"use strict";{C3.Plugins.Button.Instance=class extends C3.SDKDOMInstanceBase{constructor(a,b){super(a,"button"),this._text="OK",this._isCheckbox=!1,this._isChecked=!1,this._title="",this._id="",this._isEnabled=!0,this._autoFontSize=!0,b&&(this._isCheckbox=1===b[0],this._text=b[1],this._title=b[2],this.GetWorldInfo().SetVisible(b[3]),this._isEnabled=b[4],this._autoFontSize=b[5],this._isChecked=b[6],this._id=b[7]),this.CreateElement({"id":this._id})}Release(){super.Release()}GetElementState(){return{"text":this._text,"isCheckbox":this._isCheckbox,"isChecked":this._isChecked,"title":this._title,"isVisible":this.GetWorldInfo().IsVisible(),"isEnabled":this._isEnabled}}async _OnClick(a){this._isChecked=a["isChecked"],this.GetScriptInterface().dispatchEvent(C3.New(C3.Event,"click",!0)),await this.TriggerAsync(C3.Plugins.Button.Cnds.OnClicked)}_SetText(a){this._text===a||(this._text=a,this.UpdateElementState())}_GetText(){return this._text}_SetTooltip(a){this._title===a||(this._title=a,this.UpdateElementState())}_GetTooltip(){return this._title}_SetEnabled(a){a=!!a;this._isEnabled===a||(this._isEnabled=a,this.UpdateElementState())}_IsEnabled(){return this._isEnabled}_SetChecked(a){this._isCheckbox&&(a=!!a,this._isChecked===a||(this._isChecked=a,this.UpdateElementState()))}_IsChecked(){return this._isChecked}Draw(){}SaveToJson(){return{"text":this._text,"checked":this._isChecked,"title":this._title,"enabled":this._isEnabled}}LoadFromJson(a){this._text=a["text"],this._isChecked=a["checked"],this._title=a["title"],this._isEnabled=a["enabled"],this.UpdateElementState()}GetPropertyValueByIndex(a){return 1===a?this._text:2===a?this._title:4===a?this._isEnabled:5===a?this._autoFontSize:6===a?this._isChecked:7===a?this._id:void 0}SetPropertyValueByIndex(a,b){switch(a){case 1:if(this._text===b)return;this._text=b,this.UpdateElementState();break;case 2:if(this._title===b)return;this._title=b,this.UpdateElementState();break;case 4:if(this._isEnabled===!!b)return;this._isEnabled=!!b,this.UpdateElementState();break;case 5:this._autoFontSize=!!b;break;case 6:if(this._isChecked===!!b)return;this._isChecked=!!b,this.UpdateElementState();break;case 7:if(this._id===!!b)return;this._id=b,this.UpdateElementState();}}GetDebuggerProperties(){const a=C3.Plugins.Button.Acts;return[{title:"plugins.button.name",properties:[{name:"plugins.button.properties.text.name",value:this._text,onedit:(b)=>this.CallAction(a.SetText,b)},{name:"plugins.button.properties.enabled.name",value:this._isEnabled,onedit:(b)=>this.CallAction(a.SetEnabled,b)},{name:"plugins.button.properties.checked.name",value:this._isChecked,onedit:(b)=>this.CallAction(a.SetChecked,b)}]}]}GetScriptInterfaceClass(){return IButtonInstance}};const a=new WeakMap;self.IButtonInstance=class extends IDOMInstance{constructor(){super(),a.set(this,IInstance._GetInitInst().GetSdkInstance())}set text(b){a.get(this)._SetText(b)}get text(){return a.get(this)._GetText()}set tooltip(b){a.get(this)._SetTooltip(b)}get tooltip(){return a.get(this)._GetTooltip()}set isEnabled(b){a.get(this)._SetEnabled(b)}get isEnabled(){return a.get(this)._IsEnabled()}set isChecked(b){a.get(this)._SetChecked(b)}get isChecked(){return a.get(this)._IsChecked()}}}
+
+"use strict";C3.Plugins.Button.Cnds={OnClicked(){return!0},IsChecked(){return this._isChecked},CompareText(a,b){return b?this._text===a:C3.equalsNoCase(this._text,a)}};
+
+"use strict";C3.Plugins.Button.Acts={SetText(a){this._SetText(a)},SetTooltip(a){this._SetTooltip(a)},SetVisible(a){const b=this.GetWorldInfo();a=0!==a;b.IsVisible()===a||b.SetVisible(a)},SetEnabled(a){this._SetEnabled(a)},SetFocus(){this.FocusElement()},SetBlur(){this.BlurElement()},SetCSSStyle(a,b){this.SetElementCSSStyle(a,b)},SetChecked(a){this._SetChecked(0!==a)},ToggleChecked(){this._isCheckbox&&(this._isChecked=!this._isChecked,this.UpdateElementState())}};
+
+"use strict";C3.Plugins.Button.Exps={Text(){return this._text}};
+
+"use strict";C3.Plugins.Browser=class extends C3.SDKPluginBase{constructor(a){super(a)}Release(){super.Release()}};
+
+"use strict";C3.Plugins.Browser.Type=class extends C3.SDKTypeBase{constructor(a){super(a)}Release(){super.Release()}OnCreate(){}};
+
+"use strict";{C3.Plugins.Browser.Instance=class extends C3.SDKInstanceBase{constructor(a){super(a,"browser"),this._initLocationStr="",this._isOnline=!1,this._referrer="",this._docTitle="",this._isCookieEnabled=!1,this._screenWidth=0,this._screenHeight=0,this._windowOuterWidth=0,this._windowOuterHeight=0,this._isScirraArcade=!1,this.AddDOMMessageHandler("online-state",(a)=>this._OnOnlineStateChanged(a)),this.AddDOMMessageHandler("backbutton",()=>this._OnBackButton()),this.AddDOMMessageHandler("sw-message",(a)=>this._OnSWMessage(a));const b=this.GetRuntime().Dispatcher();this._disposables=new C3.CompositeDisposable(C3.Disposable.From(b,"afterfirstlayoutstart",()=>this._OnAfterFirstLayoutStart()),C3.Disposable.From(b,"window-resize",()=>this._OnWindowResize()),C3.Disposable.From(b,"suspend",()=>this._OnSuspend()),C3.Disposable.From(b,"resume",()=>this._OnResume())),this._runtime.AddLoadPromise(this.PostToDOMAsync("get-initial-state",{"exportType":this._runtime.GetExportType()}).then((a)=>{this._initLocationStr=a["location"],this._isOnline=a["isOnline"],this._referrer=a["referrer"],this._docTitle=a["title"],this._isCookieEnabled=a["isCookieEnabled"],this._screenWidth=a["screenWidth"],this._screenHeight=a["screenHeight"],this._windowOuterWidth=a["windowOuterWidth"],this._windowOuterHeight=a["windowOuterHeight"],this._isScirraArcade=a["isScirraArcade"]}))}Release(){super.Release()}_OnAfterFirstLayoutStart(){this.PostToDOM("ready-for-sw-messages")}async _OnOnlineStateChanged(a){const b=!!a["isOnline"];this._isOnline===b||(this._isOnline=b,this._isOnline?await this.TriggerAsync(C3.Plugins.Browser.Cnds.OnOnline):await this.TriggerAsync(C3.Plugins.Browser.Cnds.OnOffline))}async _OnWindowResize(){await this.TriggerAsync(C3.Plugins.Browser.Cnds.OnResize)}_OnSuspend(){this.Trigger(C3.Plugins.Browser.Cnds.OnPageHidden)}_OnResume(){this.Trigger(C3.Plugins.Browser.Cnds.OnPageVisible)}async _OnBackButton(){await this.TriggerAsync(C3.Plugins.Browser.Cnds.OnBackButton)}_OnSWMessage(a){const b=a["type"];"downloading-update"===b?this.Trigger(C3.Plugins.Browser.Cnds.OnUpdateFound):"update-ready"===b||"update-pending"===b?this.Trigger(C3.Plugins.Browser.Cnds.OnUpdateReady):"offline-ready"===b&&this.Trigger(C3.Plugins.Browser.Cnds.OnOfflineReady)}GetDebuggerProperties(){return[{title:"plugins.browser.name",properties:[{name:"plugins.browser.debugger.user-agent",value:navigator.userAgent},{name:"plugins.browser.debugger.is-online",value:this._isOnline},{name:"plugins.browser.debugger.is-fullscreen",value:this._runtime.GetCanvasManager().IsDocumentFullscreen()}]}]}}}
+
+"use strict";C3.Plugins.Browser.Cnds={IsOnline(){return this._isOnline},OnOnline(){return!0},OnOffline(){return!0},OnResize(){return!0},CookiesEnabled(){return this._isCookieEnabled},IsFullscreen(){return this._runtime.GetCanvasManager().IsDocumentFullscreen()},OnBackButton(){return!0},IsPortraitLandscape(a){const b=this._runtime.GetCanvasManager().GetLastWidth(),c=this._runtime.GetCanvasManager().GetLastHeight(),d=b<=c?0:1;return d===a},OnUpdateFound(){return!0},OnUpdateReady(){return!0},OnOfflineReady(){return!0},PageVisible(){return!this._runtime.IsSuspended()},OnPageHidden(){return!0},OnPageVisible(){return!0},HasJava(){return!1},IsDownloadingUpdate(){return!1},OnMenuButton(){return!1},OnSearchButton(){return!1},IsMetered(){return!1},IsCharging(){return!0},SupportsFullscreen(){return!0}};
+
+"use strict";{const ORIENTATIONS=["portrait","landscape","portrait-primary","portrait-secondary","landscape-primary","landscape-secondary"];C3.Plugins.Browser.Acts={Alert(a){this.PostToDOM("alert",{"message":a.toString()})},Close(){this._isScirraArcade||(this._runtime.IsDebug()?C3Debugger.CloseWindow():this.PostToDOM("close"))},Focus(){this.PostToDOM("set-focus",{"isFocus":!0})},Blur(){this.PostToDOM("set-focus",{"isFocus":!1})},GoBack(){this._isScirraArcade||this.PostToDOM("navigate",{"type":"back"})},GoForward(){this._isScirraArcade||this.PostToDOM("navigate",{"type":"forward"})},GoHome(){this._isScirraArcade||this.PostToDOM("navigate",{"type":"home"})},Reload(){this._isScirraArcade||this.PostToDOM("navigate",{"type":"reload"})},GoToURL(a,b){this._PostToDOMMaybeSync("navigate",{"type":"url","url":a,"target":b,"exportType":this._runtime.GetExportType()})},GoToURLWindow(a,b){this._PostToDOMMaybeSync("navigate",{"type":"new-window","url":a,"tag":b,"exportType":this._runtime.GetExportType()})},RequestFullScreen(a,b){2<=a&&(a+=1),6===a&&(a=2),1===a&&(a=0);const c=C3.CanvasManager._FullscreenModeNumberToString(a);this._runtime.GetCanvasManager().SetDocumentFullscreenMode(c),this._PostToDOMMaybeSync("request-fullscreen",{"navUI":b})},CancelFullScreen(){this._PostToDOMMaybeSync("exit-fullscreen")},Vibrate(a){const b=a.split(",");for(let c=0,d=b.length;c<d;++c)b[c]=parseInt(b[c],10);this._PostToDOMMaybeSync("vibrate",{"pattern":b})},async InvokeDownload(a,b){if(b){const c=await this._runtime.GetAssetManager().GetProjectFileUrl(a);this._runtime.InvokeDownload(c,b)}},InvokeDownloadString(a,b,c){if(c){const d=`data:${b},${encodeURIComponent(a)}`;this._runtime.InvokeDownload(d,c)}},ConsoleLog(a,b){b=b.toString(),0===a?console.log(b):1===a?console.warn(b):2==a&&console.error(b)},ConsoleGroup(a){console.group(a)},ConsoleGroupEnd(){console.groupEnd()},ExecJs(jsStr){try{eval(jsStr)}catch(a){console.error("Error executing JavaScript: ",a)}},LockOrientation(a){if(a=Math.floor(a),!(0>a||a>=ORIENTATIONS.length)){const b=ORIENTATIONS[a];this._PostToDOMMaybeSync("lock-orientation",{"orientation":b})}},UnlockOrientation(){this._PostToDOMMaybeSync("unlock-orientation")},LoadStyleSheet(a){this._runtime.GetAssetManager().LoadStyleSheet(a)}}}
+
+'use strict';C3.Plugins.Browser.Exps={URL(){return this._runtime.IsInWorker()?this._initLocationStr:location.toString()},Protocol(){return this._runtime.IsInWorker()?new URL(this._initLocationStr).protocol:location.protocol},Domain(){return this._runtime.IsInWorker()?new URL(this._initLocationStr).hostname:location.hostname},PathName(){return this._runtime.IsInWorker()?new URL(this._initLocationStr).pathname:location.pathname},Hash(){return this._runtime.IsInWorker()?new URL(this._initLocationStr).hash:location.hash},QueryString(){return this._runtime.IsInWorker()?new URL(this._initLocationStr).search:location.search},QueryParam(a){const b=this._runtime.IsInWorker()?new URL(this._initLocationStr).search:location.search,c=RegExp('[?&]'+a+'=([^&]*)').exec(b);return c?decodeURIComponent(c[1].replace(/\+/g,' ')):''},Referrer(){return this._referrer},Title(){return this._docTitle},Language(){return navigator.language},Platform(){return navigator.platform},UserAgent(){return navigator.userAgent},ExecJS(jsStr){let result=0;try{result=eval(jsStr)}catch(a){console.error('Error executing JavaScript: ',a)}return'number'==typeof result||'string'==typeof result?result:'boolean'==typeof result?result?1:0:0},Name(){return navigator.appName},Version(){return navigator.appVersion},Product(){return navigator.product},Vendor(){return navigator.vendor},BatteryLevel(){return 1},BatteryTimeLeft(){return 1/0},Bandwidth(){const a=navigator['connection'];return a?a['downlink']||a['downlinkMax']||a['bandwidth']||1/0:1/0},ConnectionType(){const a=navigator['connection'];return a?a['type']||'unknown':'unknown'},DevicePixelRatio(){return self.devicePixelRatio},ScreenWidth(){return this._screenWidth},ScreenHeight(){return this._screenHeight},WindowInnerWidth(){return this._runtime.GetCanvasManager().GetLastWidth()},WindowInnerHeight(){return this._runtime.GetCanvasManager().GetLastHeight()},WindowOuterWidth(){return this._windowOuterWidth},WindowOuterHeight(){return this._windowOuterWidth}};
+
 "use strict";C3.Behaviors.DragnDrop=class extends C3.SDKBehaviorBase{constructor(a){super(a);const b=this._runtime.Dispatcher();this._disposables=new C3.CompositeDisposable(C3.Disposable.From(b,"pointerdown",(a)=>this._OnPointerDown(a.data)),C3.Disposable.From(b,"pointermove",(a)=>this._OnPointerMove(a.data)),C3.Disposable.From(b,"pointerup",(a)=>this._OnPointerUp(a.data,!1)),C3.Disposable.From(b,"pointercancel",(a)=>this._OnPointerUp(a.data,!0)))}Release(){this._disposables.Release(),this._disposables=null,super.Release()}_OnPointerDown(a){this._OnInputDown(a["pointerId"].toString(),a["clientX"]-this._runtime.GetCanvasClientX(),a["clientY"]-this._runtime.GetCanvasClientY())}_OnPointerMove(a){this._OnInputMove(a["pointerId"].toString(),a["clientX"]-this._runtime.GetCanvasClientX(),a["clientY"]-this._runtime.GetCanvasClientY())}_OnPointerUp(a){this._OnInputUp(a["pointerId"].toString())}async _OnInputDown(a,b,c){const d=this.GetInstances();let e=null,f=null,g=0,h=0;for(const i of d){const a=i.GetBehaviorSdkInstanceFromCtor(C3.Behaviors.DragnDrop);if(!a.IsEnabled()||a.IsDragging())continue;const d=i.GetWorldInfo(),j=d.GetLayer(),[k,l]=j.CanvasCssToLayer(b,c,d.GetTotalZElevation());if(!d.ContainsPoint(k,l))continue;if(!e){e=i,f=a,g=k,h=l;continue}const m=e.GetWorldInfo();(j.GetIndex()>m.GetLayer().GetIndex()||j.GetIndex()===m.GetLayer().GetIndex()&&d.GetZIndex()>m.GetZIndex())&&(e=i,f=a,g=k,h=l)}e&&(await f._OnDown(a,g,h))}_OnInputMove(a,b,c){const d=this.GetInstances();for(const e of d){const d=e.GetBehaviorSdkInstanceFromCtor(C3.Behaviors.DragnDrop);if(!d.IsEnabled()||!d.IsDragging()||d.IsDragging()&&d.GetDragSource()!==a)continue;const f=e.GetWorldInfo(),g=f.GetLayer(),[h,i]=g.CanvasCssToLayer(b,c,f.GetTotalZElevation());d._OnMove(h,i)}}async _OnInputUp(a){const b=this.GetInstances();for(const c of b){const b=c.GetBehaviorSdkInstanceFromCtor(C3.Behaviors.DragnDrop);b.IsDragging()&&b.GetDragSource()===a&&(await b._OnUp())}}};
 
 "use strict";C3.Behaviors.DragnDrop.Type=class extends C3.SDKBehaviorTypeBase{constructor(a){super(a)}Release(){super.Release()}OnCreate(){}};
@@ -557,6 +581,18 @@ self["C3_Shaders"] = {};
 
 "use strict";C3.Behaviors.Rotate.Exps={Speed(){return C3.toDegrees(this._speed)},Acceleration(){return C3.toDegrees(this._acceleration)}};
 
+"use strict";C3.Behaviors.Fade=class extends C3.SDKBehaviorBase{constructor(a){super(a)}Release(){super.Release()}};
+
+"use strict";C3.Behaviors.Fade.Type=class extends C3.SDKBehaviorTypeBase{constructor(a){super(a)}Release(){super.Release()}OnCreate(){}};
+
+"use strict";{C3.Behaviors.Fade.Instance=class extends C3.SDKBehaviorInstanceBase{constructor(a,b){super(a),this._fadeInTime=0,this._waitTime=0,this._fadeOutTime=0,this._destroy=!0,this._activeAtStart=!0,this._setMaxOpacity=!1,this._stage=0,this._stageTime=C3.New(C3.KahanSum),this._maxOpacity=this._inst.GetWorldInfo().GetOpacity()||1,b&&(this._fadeInTime=b[0],this._waitTime=b[1],this._fadeOutTime=b[2],this._destroy=!!b[3],this._activeAtStart=!!b[4],this._stage=this._activeAtStart?0:3),this._activeAtStart&&(0===this._fadeInTime?(this._stage=1,0===this._waitTime&&(this._stage=2)):(this._inst.GetWorldInfo().SetOpacity(0),this._runtime.UpdateRender())),this._StartTicking()}Release(){super.Release()}SaveToJson(){return{"fit":this._fadeInTime,"wt":this._waitTime,"fot":this._fadeOutTime,"d":this._destroy,"s":this._stage,"st":this._stageTime.Get(),"mo":this._maxOpacity}}LoadFromJson(a){this._fadeInTime=a["fit"],this._waitTime=a["wt"],this._fadeOutTime=a["fot"],this._destroy=a["d"],this._stage=a["s"],this._stageTime.Set(a["st"]),this._maxOpacity=a["mo"]}Tick(){const a=this._runtime.GetDt(this._inst);this._stageTime.Add(a);const b=this._inst.GetWorldInfo();0===this._stage&&(b.SetOpacity(this._stageTime.Get()/this._fadeInTime)*this._maxOpacity,this._runtime.UpdateRender(),b.GetOpacity()>=this._maxOpacity&&(b.SetOpacity(this._maxOpacity),this._stage=1,this._stageTime.Reset(),this.Trigger(C3.Behaviors.Fade.Cnds.OnFadeInEnd))),1===this._stage&&this._stageTime.Get()>=this._waitTime&&(this._stage=2,this._stageTime.Reset(),this.Trigger(C3.Behaviors.Fade.Cnds.OnWaitEnd)),2===this._stage&&0!==this._fadeOutTime&&(b.SetOpacity(this._maxOpacity-this._stageTime.Get()/this._fadeOutTime*this._maxOpacity),this._runtime.UpdateRender(),0>=b.GetOpacity()&&(this._stage=3,this._stageTime.Reset(),this.Trigger(C3.Behaviors.Fade.Cnds.OnFadeOutEnd),this._destroy&&this._runtime.DestroyInstance(this._inst)))}Start(){this._stage=0,this._stageTime.Reset(),0===this._fadeInTime?(this._stage=1,0===this._waitTime&&(this._stage=2)):(this._inst.GetWorldInfo().SetOpacity(0),this._runtime.UpdateRender())}GetPropertyValueByIndex(a){return a===0?this._fadeInTime:1===a?this._waitTime:2===a?this._fadeOutTime:3===a?this._destroy:void 0}SetPropertyValueByIndex(a,b){a===0?this._fadeInTime=b:1===a?this._waitTime=b:2===a?this._fadeOutTime=b:3===a?this._destroy=!!b:void 0}GetDebuggerProperties(){return[{title:"$"+this.GetBehaviorType().GetName(),properties:[{name:"behaviors.fade.properties.fade-in-time.name",value:this._fadeInTime,onedit:(a)=>this._fadeInTime=a},{name:"behaviors.fade.properties.wait-time.name",value:this._waitTime,onedit:(a)=>this._waitTime=a},{name:"behaviors.fade.properties.fade-out-time.name",value:this._fadeOutTime,onedit:(a)=>this._fadeOutTime=a},{name:"behaviors.fade.debugger.stage",value:["behaviors.fade.debugger."+["fade-in","wait","fade-out","done"][this._stage]]}]}]}}}
+
+"use strict";C3.Behaviors.Fade.Cnds={OnFadeOutEnd(){return!0},OnFadeInEnd(){return!0},OnWaitEnd(){return!0}};
+
+"use strict";C3.Behaviors.Fade.Acts={StartFade(){this._activeAtStart||this._setMaxOpacity||(this._maxOpacity=this._inst.GetWorldInfo().GetOpacity()||1,this._setMaxOpacity=!0),3===this._stage&&this.Start()},RestartFade(){this.Start()},SetFadeInTime(a){0>a&&(a=0),this._fadeInTime=a},SetWaitTime(a){0>a&&(a=0),this._waitTime=a},SetFadeOutTime(a){0>a&&(a=0),this._fadeOutTime=a}};
+
+"use strict";C3.Behaviors.Fade.Exps={FadeInTime(){return this._fadeInTime},WaitTime(){return this._waitTime},FadeOutTime(){return this._fadeOutTime}};
+
 "use strict"
 self.C3_GetObjectRefTable = function () {
 	return [
@@ -567,6 +603,9 @@ self.C3_GetObjectRefTable = function () {
 		C3.Plugins.Keyboard,
 		C3.Behaviors.Rotate,
 		C3.Plugins.Text,
+		C3.Plugins.Button,
+		C3.Behaviors.Fade,
+		C3.Plugins.Browser,
 		C3.Plugins.System.Cnds.EveryTick,
 		C3.Plugins.Text.Acts.SetText,
 		C3.Plugins.System.Cnds.CompareBoolVar,
@@ -576,12 +615,15 @@ self.C3_GetObjectRefTable = function () {
 		C3.Plugins.System.Cnds.OnLayoutStart,
 		C3.Behaviors.Pin.Acts.Pin,
 		C3.Behaviors.Rotate.Acts.SetSpeed,
+		C3.Plugins.Text.Acts.SetOpacity,
 		C3.Plugins.Sprite.Cnds.CompareInstanceVar,
 		C3.Plugins.System.Acts.SetVar,
 		C3.Plugins.Sprite.Cnds.PickByUID,
 		C3.Plugins.System.Acts.AddVar,
 		C3.Plugins.System.Cnds.CompareVar,
+		C3.Plugins.System.Cnds.TriggerOnce,
 		C3.Plugins.System.Acts.SetBoolVar,
+		C3.Plugins.Sprite.Acts.SetAnim,
 		C3.Plugins.System.Cnds.IsGroupActive,
 		C3.Behaviors.DragnDrop.Cnds.IsDragging,
 		C3.Plugins.Sprite.Cnds.IsOverlapping,
@@ -592,8 +634,28 @@ self.C3_GetObjectRefTable = function () {
 		C3.Plugins.Touch.Cnds.OnTouchObject,
 		C3.Plugins.System.Cnds.Every,
 		C3.Plugins.Sprite.Acts.RotateTowardAngle,
-		C3.Plugins.Sprite.Acts.SetAnim,
-		C3.Plugins.Sprite.Acts.SetInstanceVar
+		C3.Plugins.Sprite.Cnds.IsAnimPlaying,
+		C3.Plugins.Sprite.Acts.SetInstanceVar,
+		C3.Plugins.Touch.Cnds.OnTapGestureObject,
+		C3.Plugins.Sprite.Cnds.PickDistance,
+		C3.Plugins.Sprite.Exps.X,
+		C3.Plugins.Sprite.Exps.Y,
+		C3.Plugins.Sprite.Acts.SetPos,
+		C3.Behaviors.DragnDrop.Acts.Drop,
+		C3.Behaviors.DragnDrop.Acts.SetEnabled,
+		C3.Plugins.Sprite.Acts.Destroy,
+		C3.Plugins.Touch.Exps.AngleAt,
+		C3.Plugins.Sprite.Exps.Angle,
+		C3.Behaviors.DragnDrop.Cnds.OnDragStart,
+		C3.Plugins.Sprite.Cnds.CompareX,
+		C3.Plugins.System.Exps.layoutwidth,
+		C3.Plugins.Sprite.Acts.SetX,
+		C3.Plugins.Button.Cnds.OnClicked,
+		C3.Plugins.Browser.Acts.Close,
+		C3.Plugins.Button.Acts.SetVisible,
+		C3.Plugins.Text.Exps.Opacity,
+		C3.Behaviors.DragnDrop.Cnds.OnDrop,
+		C3.Plugins.System.Cnds.Compare
 	];
 };
 self.C3_JsPropNameTable = [
@@ -607,20 +669,39 @@ self.C3_JsPropNameTable = [
 	{Touch: 0},
 	{Color: 0},
 	{Clipped: 0},
+	{finishX: 0},
+	{finishY: 0},
 	{Wire: 0},
 	{ID: 0},
 	{touch: 0},
-	{AlligatorClip: 0},
+	{side: 0},
+	{BottomAlligatorClip: 0},
 	{Keyboard: 0},
 	{Rotate: 0},
 	{Needle: 0},
 	{center: 0},
 	{WireCollider: 0},
 	{label: 0},
+	{segmentID: 0},
+	{wiresegment: 0},
+	{WireHead: 0},
+	{pinID: 0},
+	{PinAnchor: 0},
+	{label2: 0},
+	{TopAlligatorClip: 0},
+	{helperTextMagnet: 0},
+	{helperTextWires: 0},
+	{Fade: 0},
+	{Button: 0},
+	{Browser: 0},
+	{coilNoTabs: 0},
+	{meterBottom: 0},
 	{CircuitBuilt: 0},
 	{rotateSpeed: 0},
 	{elapsedTime: 0},
-	{touching: 0}
+	{touching: 0},
+	{segments: 0},
+	{totalTime: 0}
 ];
 
 "use strict";
@@ -725,22 +806,26 @@ self.C3_JsPropNameTable = [
 		},
 		() => "Needle Movement",
 		() => -60,
-		() => "yellow",
-		() => "Y1",
-		() => "Y2",
-		() => "green",
-		() => "G1",
-		() => "G2",
 		() => 0,
-		() => 11,
+		() => "red",
+		() => "R2",
+		() => "R1",
+		() => "green",
+		() => "G2",
+		() => "G1",
+		() => 14,
 		p => {
 			const n0 = p._GetNode(0);
 			return () => n0.ExpInstVar();
 		},
-		() => 13,
-		() => 14,
 		() => 15,
+		() => 11,
+		() => 30,
 		() => 4,
+		() => "fade in magnet text",
+		() => "flash",
+		() => "timer",
+		() => "Animation 1",
 		() => 35,
 		() => 270,
 		() => 0.5,
@@ -758,9 +843,56 @@ self.C3_JsPropNameTable = [
 		() => 0.05,
 		() => 0.1,
 		() => 6,
-		() => "touch",
+		() => "clippyTabLeft",
+		() => "clippyTabRight",
 		() => 1,
-		() => "no touch"
+		() => "close",
+		() => "open",
+		p => {
+			const n0 = p._GetNode(0);
+			return () => ("clippyTab" + n0.ExpInstVar());
+		},
+		p => {
+			const n0 = p._GetNode(0);
+			return () => n0.ExpObject();
+		},
+		() => "snaekevents",
+		() => 0.25,
+		p => {
+			const f0 = p._GetNode(0).GetBoundMethod();
+			return () => f0(0);
+		},
+		p => {
+			const f0 = p._GetNode(0).GetBoundMethod();
+			return () => (f0() / 2);
+		},
+		p => {
+			const n0 = p._GetNode(0);
+			return () => (n0.ExpObject() + 20);
+		},
+		() => 0.2,
+		p => {
+			const n0 = p._GetNode(0);
+			return () => (n0.ExpObject() + 10);
+		},
+		() => "fade out circuit text",
+		p => {
+			const n0 = p._GetNode(0);
+			return () => (n0.ExpObject() - 10);
+		},
+		p => {
+			const n0 = p._GetNode(0);
+			const n1 = p._GetNode(1);
+			return () => and(and(n0.ExpObject(), ", "), n1.ExpObject());
+		},
+		p => {
+			const n0 = p._GetNode(0);
+			const n1 = p._GetNode(1);
+			const n2 = p._GetNode(2);
+			const n3 = p._GetNode(3);
+			return () => C3.distanceTo(n0.ExpInstVar(), n1.ExpInstVar(), n2.ExpObject(), n3.ExpObject());
+		},
+		() => "fade in button"
 	];
 }
 
